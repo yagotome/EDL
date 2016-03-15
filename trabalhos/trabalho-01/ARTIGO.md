@@ -31,22 +31,23 @@ Go é no estilo de C, mas têm muitas mudanças para melhorar a concisão, simpl
 
 Um exemplo de como fazer uma função para "girar" os valores de 3 variáveis em C poderia ser implementado da seguinte forma:
 
-	\#include <stdio.h>
-	void gira(int\*,int\*,int\*);
+	#include <stdio.h>
+	void turn(int*,int*,int*);
 	int main(void) {
 		int a = 1;
 		int b = 2;
 		int c = 3;
 		printf("%d %d %d\n", a, b, c);
-		gira(&a, &b, &c);
+		turn(&a, &b, &c);
 		printf("%d %d %d\n", a, b, c);
 		return 0;
 	}
-	void gira(int \*a, int \*b, int \*c) {
+	
+	void turn(int *a, int *b, int *c) {
 		int temp = *a;
-		\*a = \*b;
-		\*b = \*c;
-		\*c = temp;
+		*a = *b;
+		*b = *c;
+		*c = temp;
 	}
 
 Agora olhe como poderia ser feito em Go:
@@ -56,11 +57,11 @@ Agora olhe como poderia ser feito em Go:
 	func main() {
 		a, b, c := 1, 2, 3	
 		fmt.Println(a,b,c)
-		gira(&a, &b, &c)
+		turn(&a, &b, &c)
 		fmt.Println(a,b,c)
 	}
-	func gira(a \*int, b \*int, c \*int) {
-		\*a, \*b, \*c = \*b, \*c, \*a
+	func turn(a *int, b *int, c *int) {
+		*a, *b, *c = *b, *c, *a
 	}
 
 Qual linguagem fica mais claro o algoritmo que está sendo usado (mesmo em um exemplo simples desse)?
