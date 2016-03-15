@@ -31,37 +31,37 @@ Go é no estilo de C, mas têm muitas mudanças para melhorar a concisão, simpl
 
 Um exemplo de como fazer uma função para "girar" os valores de 3 variáveis em C poderia ser implementado da seguinte forma:
 
-\#include <stdio.h>
-void gira(int\*,int\*,int\*);
-int main(void) {
-	int a = 1;
-	int b = 2;
-	int c = 3;
-	printf("%d %d %d\n", a, b, c);
-	gira(&a, &b, &c);
-	printf("%d %d %d\n", a, b, c);
-	return 0;
-}
-void gira(int \*a, int \*b, int \*c) {
-	int temp = *a;
-	\*a = \*b;
-	\*b = \*c;
-	\*c = temp;
-}
+	\#include <stdio.h>
+	void gira(int\*,int\*,int\*);
+	int main(void) {
+		int a = 1;
+		int b = 2;
+		int c = 3;
+		printf("%d %d %d\n", a, b, c);
+		gira(&a, &b, &c);
+		printf("%d %d %d\n", a, b, c);
+		return 0;
+	}
+	void gira(int \*a, int \*b, int \*c) {
+		int temp = *a;
+		\*a = \*b;
+		\*b = \*c;
+		\*c = temp;
+	}
 
 Agora olhe como poderia ser feito em Go:
 
-package main
-import "fmt"
-func main() {
-	a, b, c := 1, 2, 3	
-	fmt.Println(a,b,c)
-	gira(&a, &b, &c)
-	fmt.Println(a,b,c)
-}
-func gira(a \*int, b \*int, c \*int) {
-	\*a, \*b, \*c = \*b, \*c, \*a
-}
+	package main
+	import "fmt"
+	func main() {
+		a, b, c := 1, 2, 3	
+		fmt.Println(a,b,c)
+		gira(&a, &b, &c)
+		fmt.Println(a,b,c)
+	}
+	func gira(a \*int, b \*int, c \*int) {
+		\*a, \*b, \*c = \*b, \*c, \*a
+	}
 
 Qual linguagem fica mais claro o algoritmo que está sendo usado (mesmo em um exemplo simples desse)?
 Qual linguagem você conseguiria escrever suas lógicas sem necessitar de escrever muitos detalhes detalhes da linguagem?
@@ -81,13 +81,16 @@ Além disso, vale saber que ela possui algumas características muito importante
 
 Go é uma linguagem nova (moderna), que ainda está em desenvolvimento, na versão atual 1.6.
 
-A linguagem é fortemente projetada e é muito eficiênte para programção de sistemas, em opção à C.
+Por suas características, ela não é muito produtivo para projetos em que o nível de abstração é prioridade, como por exemplo, sistemas web, mobile ou até desktop.
+
+No entanto, a linguagem é fortemente projetada e é muito eficiênte para programção de sistemas, em opção à C.
 
 Pode-se dizer que Go é uma extensão de C, ou até uma versão melhorada de C, embora tenham algumas diferenças e Go tenha aspectos de outras linguagens.
 
-No entanto, por suas características, ela não é muito produtivo para projetos em que o nível de abstração é prioridade, como por exemplo, sistemas web, mobile ou até desktop.
+Go tem a potência de C com a simplicidade de python.
 
 ## Bibliografia
 
 * Site da linguagem: https://golang.org
 * Wikipedia: https://en.wikipedia.org/wiki/Go_(programming_language)
+* http://pt.slideshare.net/natavenancio/linguagem-go-12238181
