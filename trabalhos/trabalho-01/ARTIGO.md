@@ -31,7 +31,7 @@ Go é no estilo de C, mas têm muitas mudanças para melhorar a concisão, simpl
 
 Um exemplo de como fazer uma função para "girar" os valores de 3 variáveis em C poderia ser implementado da seguinte forma:
 
-#include <stdio.h>
+\#include <stdio.h>
 void gira(int\*,int\*,int\*);
 int main(void) {
 	int a = 1;
