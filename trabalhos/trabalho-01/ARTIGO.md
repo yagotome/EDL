@@ -23,7 +23,7 @@ Go é uma linguagem de paradigmas imperativa e estruturada.
 
 Ela é compilada estaticamente e é concorrente.
 
-Go é fortemente tipada.
+Go possui tipagem forte e estática, porém possui também inferência de tipo.
 
 ## Avaliação Comparativa
 
