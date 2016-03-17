@@ -78,11 +78,41 @@ Além disso, vale saber que ela possui algumas características muito importante
 * Uma interface de sistema no lugar da herança virtual, tipo e embutido em vez de herança não virtual
 * Um conjunto de ferramentas que, por padrão, produz estaticamente binários nativos já "linkados" (linked), sem dependências externas
 
+Um exemplo de concorrência em Go que mostra sua goroutine com o uso de channel, um novo recurso que a linguagem trouxe:
+
+	package main
+	import "fmt"
+	func main() {
+		ch := make(chan int)
+		go func(c chan int) {
+			c <- 1
+			fmt.Println(2)
+		}(ch)
+		go func(ch chan int) {
+			ch <- 3
+			fmt.Println(4)
+		}(ch)
+		fmt.Println(<- ch)
+		fmt.Println(<- ch)
+	}
+
+O resultado desse programa será: 
+
+	4
+	3
+	2
+	1
+
+Isso ocorre pois esse programa usa um channel (chan) em cada goroutines (funções chamadas após o comando "go"). Nesse caso, temos 2 funções anônimas que simplesmente imprimem 2 e 4, respectivamente. No entanto, elas recebem por paramêtro um channel e um valor (1 e 3) é recebido (canal<-) por cada um dos channels, o que quer dizer que as funções estão bloqueadas para rodar até esses channels serem enviados (<-canal), liberando sua execução. Um detalhe aqui é que os channels funcionam como uma pilha, empilhando assim seus processos, e por isso a ordem dos números saiu invertida.
+
+Esse exemplo, embora simples, mostra que esse é um recurso muito importante, por exemplo, para trabalhar com deadlocks, dentre outros problemas envolvendo concorrência.
+
+
 ## Conclusão
 
 Go é uma linguagem nova (moderna), que ainda está em desenvolvimento, na versão atual 1.6.
 
-Por suas características, ela não é muito produtivo para projetos em que o nível de abstração é prioridade, como por exemplo, sistemas web, mobile ou até desktop.
+Por suas características, ela não é muito produtivo para projetos em que o nível de abstração é prioridade, como por exemplo, sistemas web, mobile ou até desktop, embora existam frameworks open source para facilitar essas tarefas.
 
 No entanto, a linguagem é fortemente projetada e é muito eficiênte para programção de sistemas, em opção à C.
 
