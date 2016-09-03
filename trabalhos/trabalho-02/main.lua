@@ -1,3 +1,4 @@
 function love.draw()
-    love.graphics.print(" Yago Tomé\n\nAmbiente ok!", 350, 250)
+    love.graphics.print("Yago Tomé", 356, 250)
+    love.graphics.print("Ambiente ok!", 350, 280)
 end
