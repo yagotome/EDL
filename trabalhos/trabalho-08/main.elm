@@ -29,6 +29,7 @@ type Exp =    Num Int
 type Prog = Attr String Exp
           | Seq Prog Prog
           | If Exp Prog Prog
+          | While Exp Prog
 
 evalExp : Exp -> Env -> Int
 evalExp exp env =
@@ -100,6 +101,11 @@ evalProg s env =
                     (evalProg p1 env)
                 else
                     (evalProg p2 env)
+        While cond p   ->
+                if (evalExp cond env) == 0 then
+                    env
+                else
+                    (evalProg (Seq p s) env)
 
 zero : Env
 zero = \ask -> 0
@@ -129,13 +135,30 @@ p9 =
                 (And 
                     (Or 
                         (Num 0)
-                        (Num 1)
-                    )
-                    (Num 1)
-                )
-            )
+                        (Num 1))
+                    (Num 1)))
             (Attr "ret" (Num 1))
-            (Attr "ret" (Num 0))
-        )
+            (Attr "ret" (Num 0)))
 
-main = text (toString (lang p9))
+-- Fatorial de 10
+p10 =  (Seq
+            (Seq
+                (Attr "x" (Num 1))
+                (Seq                    
+                    (Attr "i" (Num 0))
+                    (While 
+                        (Lt (Var "i") (Num 10))
+                        (Seq 
+                            (Attr "x"
+                                (Times
+                                    (Var "x")
+                                    (Add
+                                        (Var "i")
+                                        (Num 1))))
+                            (Attr "i"
+                                (Add
+                                    (Var "i")
+                                    (Num 1)))))))
+            (Attr "ret" (Var "x")))
+
+main = text (toString (lang p10))
