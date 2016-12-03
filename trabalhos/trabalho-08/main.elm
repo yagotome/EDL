@@ -4,7 +4,17 @@ type alias Env = (String -> Int)
 
 type Exp =    Num Int
             | Var String
-            |Add Exp Exp
+            -- Conditional
+            | If Exp Exp Exp
+            | Gt Exp Exp
+            | Lt Exp Exp
+            | Eq Exp Exp
+            | And Exp Exp
+            | Or Exp Exp
+            | Xor Exp Exp
+            | Not Exp
+            -- Mathematics operations
+            | Add Exp Exp
             | Sub Exp Exp
             | Times Exp Exp
             | Div Exp Exp
@@ -25,6 +35,48 @@ evalExp exp env =
     case exp of
         Num v               -> v
         Var var             -> (env var)
+        -- Conditional
+        If cond exp1 exp2   ->
+                if (evalExp cond env) /= 0 then
+                    (evalExp exp1 env)
+                else
+                    (evalExp exp2 env)
+        Gt exp1 exp2        ->
+                if (evalExp exp1 env) > (evalExp exp2 env) then
+                    1
+                else
+                    0
+        Lt exp1 exp2        ->
+                if (evalExp exp1 env) < (evalExp exp2 env) then
+                    1
+                else
+                    0
+        Eq exp1 exp2        ->
+                if (evalExp exp1 env) == (evalExp exp2 env) then
+                    1
+                else
+                    0
+        And exp1 exp2       ->
+                if ((evalExp exp1 env) /= 0) && ((evalExp exp2 env) /= 0) then
+                    1
+                else
+                    0
+        Or exp1 exp2        ->
+                if ((evalExp exp1 env) /= 0) || ((evalExp exp2 env) /= 0) then
+                    1
+                else
+                    0
+        Xor exp1 exp2       ->
+                if (xor ((evalExp exp1 env) /= 0) ((evalExp exp2 env) /= 0)) then
+                    1
+                else
+                    0
+        Not exp             ->
+                if (evalExp exp env) == 0 then
+                    1
+                else
+                    0
+        -- Mathematics operations
         Add exp1 exp2       -> (evalExp exp1 env) + (evalExp exp2 env)
         Sub exp1 exp2       -> (evalExp exp1 env) - (evalExp exp2 env)        
         Times exp1 exp2     -> (evalExp exp1 env) * (evalExp exp2 env)
@@ -70,4 +122,21 @@ p5 = (Attr "ret" (Exponential (Num 2) (Num 5)))
 p6 = (Attr "ret" (Logf (Num 2) (Num 7)))
 p7 = (Attr "ret" (Logc (Num 2) (Num 7)))
 
-main = text (toString (lang p7))
+p8 = (Attr "ret" (If (Gt (Num 2) (Num 1)) (Num 1) (Num 0)))
+p9 = (Attr "ret" 
+        (If 
+            (Not 
+                (And 
+                    (Or 
+                        (Num 0)
+                        (Num 0)
+                    )
+                    (Num 1)
+                )
+            )
+            (Num 1)
+            (Num 0)
+        )
+     )
+
+main = text (toString (lang p9))
