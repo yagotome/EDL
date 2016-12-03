@@ -1,10 +1,10 @@
 import Html exposing (text)
 
 type alias Env = (String -> Int)
-zero : Env
-zero = \ask -> 0
 
-type Exp =  Add Exp Exp
+type Exp =    Num Int
+            | Var String
+            |Add Exp Exp
             | Sub Exp Exp
             | Times Exp Exp
             | Div Exp Exp
@@ -16,18 +16,15 @@ type Exp =  Add Exp Exp
             | Logf Exp Exp
             | Logc Exp Exp
             | Logr Exp Exp
-            | Num Int
-            | Var String
 
 type Prog = Attr String Exp
           | Seq Prog Prog
 
-e1 : Exp
-e1 = Add (Num 9) (Num 1)
-
 evalExp : Exp -> Env -> Int
 evalExp exp env =
     case exp of
+        Num v               -> v
+        Var var             -> (env var)
         Add exp1 exp2       -> (evalExp exp1 env) + (evalExp exp2 env)
         Sub exp1 exp2       -> (evalExp exp1 env) - (evalExp exp2 env)        
         Times exp1 exp2     -> (evalExp exp1 env) * (evalExp exp2 env)
@@ -40,8 +37,6 @@ evalExp exp env =
         Logf exp1 exp2      -> floor (logBase (toFloat (evalExp exp1 env)) (toFloat (evalExp exp2 env)))
         Logc exp1 exp2      -> ceiling (logBase (toFloat (evalExp exp1 env)) (toFloat (evalExp exp2 env)))
         Logr exp1 exp2      -> round (logBase (toFloat (evalExp exp1 env)) (toFloat (evalExp exp2 env)))
-        Num v               -> v
-        Var var             -> (env var)
 
 evalProg : Prog -> Env -> Env
 evalProg s env =
@@ -53,6 +48,9 @@ evalProg s env =
                 val = (evalExp exp env)
             in
                 \ask -> if ask==var then val else (env ask)
+
+zero : Env
+zero = \ask -> 0
 
 lang : Prog -> Int
 lang p = ((evalProg p zero) "ret")
