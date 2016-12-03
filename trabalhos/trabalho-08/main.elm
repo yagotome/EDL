@@ -4,8 +4,7 @@ type alias Env = (String -> Int)
 
 type Exp =    Num Int
             | Var String
-            -- Conditional
-            | If Exp Exp Exp
+            -- Boolean operations
             | Gt Exp Exp
             | Lt Exp Exp
             | Eq Exp Exp
@@ -29,18 +28,14 @@ type Exp =    Num Int
 
 type Prog = Attr String Exp
           | Seq Prog Prog
+          | If Exp Prog Prog
 
 evalExp : Exp -> Env -> Int
 evalExp exp env =
     case exp of
         Num v               -> v
         Var var             -> (env var)
-        -- Conditional
-        If cond exp1 exp2   ->
-                if (evalExp cond env) /= 0 then
-                    (evalExp exp1 env)
-                else
-                    (evalExp exp2 env)
+        -- Boolean operations
         Gt exp1 exp2        ->
                 if (evalExp exp1 env) > (evalExp exp2 env) then
                     1
@@ -99,7 +94,12 @@ evalProg s env =
             let
                 val = (evalExp exp env)
             in
-                \ask -> if ask==var then val else (env ask)
+                \ask -> if ask==var then val else (env ask)        
+        If cond p1 p2   ->
+                if (evalExp cond env) /= 0 then
+                    (evalProg p1 env)
+                else
+                    (evalProg p2 env)
 
 zero : Env
 zero = \ask -> 0
@@ -122,21 +122,20 @@ p5 = (Attr "ret" (Exponential (Num 2) (Num 5)))
 p6 = (Attr "ret" (Logf (Num 2) (Num 7)))
 p7 = (Attr "ret" (Logc (Num 2) (Num 7)))
 
-p8 = (Attr "ret" (If (Gt (Num 2) (Num 1)) (Num 1) (Num 0)))
-p9 = (Attr "ret" 
+p8 = (If (Gt (Num 2) (Num 1)) (Attr "ret" (Num 1)) ((Attr "ret" (Num 0))))
+p9 = 
         (If 
             (Not 
                 (And 
                     (Or 
                         (Num 0)
-                        (Num 0)
+                        (Num 1)
                     )
                     (Num 1)
                 )
             )
-            (Num 1)
-            (Num 0)
+            (Attr "ret" (Num 1))
+            (Attr "ret" (Num 0))
         )
-     )
 
 main = text (toString (lang p9))
