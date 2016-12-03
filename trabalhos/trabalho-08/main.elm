@@ -4,6 +4,7 @@ type alias Env = (String -> Int)
 
 type Exp =    Num Int
             | Var String
+            | Const String
             -- Boolean operations
             | Gt Exp Exp
             | Lt Exp Exp
@@ -30,12 +31,14 @@ type Prog = Attr String Exp
           | Seq Prog Prog
           | If Exp Prog Prog
           | While Exp Prog
+          | DefConst String Exp
 
 evalExp : Exp -> Env -> Int
 evalExp exp env =
     case exp of
         Num v               -> v
         Var var             -> (env var)
+        Const const         -> (env const)
         -- Boolean operations
         Gt exp1 exp2        ->
                 if (evalExp exp1 env) > (evalExp exp2 env) then
@@ -89,13 +92,13 @@ evalExp exp env =
 evalProg : Prog -> Env -> Env
 evalProg s env =
     case s of
-        Seq s1 s2 ->
+        Seq s1 s2       ->
             (evalProg s2 (evalProg s1 env))
-        Attr var exp ->
+        Attr var exp    ->
             let
                 val = (evalExp exp env)
             in
-                \ask -> if ask==var then val else (env ask)        
+                \ask -> if ask == var then val else (env ask)        
         If cond p1 p2   ->
                 if (evalExp cond env) /= 0 then
                     (evalProg p1 env)
@@ -106,6 +109,20 @@ evalProg s env =
                     env
                 else
                     (evalProg (Seq p s) env)
+        -- A constante é definida uma vez não é possível alterar mais.
+        -- Decidi que o comando de atribuição (Attr) é capaz de indefinir uma constante
+        -- caso o nome da constante seja igual ao nome da variável que estar a ser criada.
+        DefConst const exp ->
+            let
+                val = (evalExp exp env)
+            in
+                if (env const) /= 0 then
+                    env
+                else
+                    \ask -> if ask == const then
+                                val
+                            else
+                                (env ask)
 
 zero : Env
 zero = \ask -> 0
@@ -161,4 +178,10 @@ p10 =  (Seq
                                     (Num 1)))))))
             (Attr "ret" (Var "x")))
 
-main = text (toString (lang p10))
+p11 = (Seq
+        (Seq
+            (DefConst "TRUE" (Num 1))
+            (DefConst "TRUE" (Num 15)))
+        (Attr "ret" (Const "TRUE")))
+
+main = text (toString (lang p11))
